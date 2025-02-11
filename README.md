@@ -15,3 +15,5 @@ Packages used in this project are:
 - fastapi - to import fastapi
 - uvicorn - to start a web server
 - httpie - to test the api endpoints
+- sqlalchemy - provides the ORM for connecting PostgreSQL with FastAPI
+- alembic - used for migrations
