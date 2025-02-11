@@ -1,5 +1,5 @@
 from .base import Base
-from sqlalchemy import Column, Integer,String
+from sqlalchemy import Column, Integer, String
 
 class Apartment(Base):
   __tablename__: str = 'apartments'
