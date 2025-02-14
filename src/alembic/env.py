@@ -2,7 +2,6 @@ import importlib
 import os
 
 from model.base import Base
-from data.database import engine
 
 from logging.config import fileConfig
 

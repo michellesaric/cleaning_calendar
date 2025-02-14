@@ -1,8 +1,5 @@
-import os
-import importlib
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from model.User import Base
+from sqlalchemy.orm import sessionmaker, Session
 
 db_user: str = "postgres"
 db_port: int = 5432
@@ -16,11 +13,12 @@ engine = create_engine(uri)
 
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
-db_session = SessionLocal()
-
-try:
-  connection = engine.connect()
-  connection.close()
-  print("✅ Connected to the database!")
-except Exception as e:
-  print(f"❌ Error: {str(e)}")
+def get_db():
+  db: Session = SessionLocal()
+  try:
+    yield db
+  except Exception as e:
+    db.rollback()
+    raise e
+  finally:
+    db.close()

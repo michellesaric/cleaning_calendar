@@ -1,11 +1,16 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from data.database import get_db
+from service.service_actions.auth_user_actions import register_new_user, login_existing_user
+from service.db_actions.user_db_actions import UserPyModel
 
 router = APIRouter()
 
-@router.get("/register")
-def register_user():
-  return "Time to register a user(not supposed to be a get method)"
+@router.post("/register")
+def register_user(user: UserPyModel, db: Session = Depends(get_db)):
+  return register_new_user(db, user)
 
-@router.get("/login")
-def login_user():
-  return "This isn't supposted to be a get method, but it's okay for now, login the user"
+@router.post("/login")
+def login_user(user: UserPyModel, db: Session = Depends(get_db)):
+  return login_existing_user(db, user)

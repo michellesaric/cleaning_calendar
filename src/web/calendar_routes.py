@@ -1,19 +1,22 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
+from data.database import get_db
+from service.service_actions.get_current_user import get_current_user
 router = APIRouter()
 
 @router.get("/import-calendar")
-def import_calendar():
-  return "So apperantly, here I can import a calendar into my app in .ics format...interesting"
+def import_calendar(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+  return {"message": "Import calendar from ics", "user": current_user.username}
 
 @router.get("/import-from-url")
-def import_calendar_from_url():
-  return "Here I also import calendar, but this time from a url"
+def import_calendar_from_url(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+  return {"message": "Import calendar from url", "user": current_user.username}
 
 @router.get("/export/{calendarId}")
-def export_calendar_by_id(calendarId):
-  return f"Finally, an actual get method, here we get the calendar with id {calendarId}"
+def export_calendar_by_id(calendarId, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+  return {"message": "Specific calendar", "user": current_user.username, "calendarId": calendarId}
 
 @router.get("/calendars")
-def get_all_calendars():
-  return "So, I return all calendars here. Cool. (FastAPI already returns everything in JSON. We love FastAPI)"
+def get_all_calendars(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+  return {"message": "All calendars", "user": current_user.username}
