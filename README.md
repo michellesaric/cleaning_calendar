@@ -20,3 +20,4 @@ Packages used in this project are:
 - python-jose - from JWT tokens
 - bcyrpt - for hashing passwords
 - ics - for parsing .ics files
+- validators - for validation of data
