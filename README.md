@@ -17,3 +17,6 @@ Packages used in this project are:
 - httpie - to test the api endpoints
 - sqlalchemy - provides the ORM for connecting PostgreSQL with FastAPI
 - alembic - used for migrations
+- python-jose - from JWT tokens
+- bcyrpt - for hashing passwords
+- ics - for parsing .ics files
