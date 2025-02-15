@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from model.Apartment import Apartment
 from model.ApartmentCalendar import ApartmentCalendar
-from service.db_actions.apartment_db_actions import create_apartment
+from service.db_actions.apartment_db_actions import get_apartment_by_id
 
 def create_apartment_calendar(db: Session, apartment_id: int, start_date: datetime, end_date: datetime, name_of_reservation: str):
   apartment = db.query(Apartment).filter(Apartment.id == apartment_id).first()
@@ -23,42 +23,46 @@ def create_apartment_calendar(db: Session, apartment_id: int, start_date: dateti
 
   return {"message": "Apartment calendar created successfully", "apartment_calendar_id": apartment_calendar.id}
 
-def get_all_calendars(db: Session):
-  calendars = db.query(ApartmentCalendar, Apartment.name, Apartment.number_of_people) \
+def get_all_calendars(db: Session, user_id: int):
+  reservations = db.query(ApartmentCalendar, Apartment.name, Apartment.user_id) \
     .join(Apartment, Apartment.id == ApartmentCalendar.apartment_id) \
+    .filter(Apartment.user_id == user_id) \
     .all()
 
-  if not calendars:
+  if not reservations:
     raise HTTPException(status_code=404, detail="No calendars found")
 
   return [{
-    "id": calendar.id,
+    "id": reservation.id,
     "name": name,
-    "number_of_people": number_of_people,
-    "start_date": calendar.start_date,
-    "end_date": calendar.end_date,
-    "name_of_reservation": calendar.name_of_reservation
-  } for calendar, name, number_of_people in calendars]
+    "start_date": reservation.start_date,
+    "end_date": reservation.end_date,
+    "name_of_reservation": reservation.name_of_reservation
+  } for reservation, name, _ in reservations]
 
-def get_calendar_by_id(db: Session, calendar_id: int):
-  calendars = db.query(ApartmentCalendar, Apartment.name, Apartment.number_of_people) \
+def get_calendar_by_id(db: Session, calendar_id: int, user_id: int):
+  reservations = db.query(ApartmentCalendar, Apartment.name, Apartment.user_id) \
     .join(Apartment, Apartment.id == ApartmentCalendar.apartment_id) \
     .filter(Apartment.id == calendar_id) \
     .all()
 
-  if not calendars:
+  if not reservations:
     raise HTTPException(status_code=404, detail="Calendar not found")
+  
+  apartment_calendar, _, _ = reservations[0]
+  apartment_id = apartment_calendar.apartment_id 
+  if apartment_id != user_id:
+    raise HTTPException(status_code=403, detail="Unauthorized to use this calendar")
 
   return [{
-    "id": calendar.id,
+    "id": reservation.id,
     "name": name,
-    "number_of_people": number_of_people,
-    "start_date": calendar.start_date,
-    "end_date": calendar.end_date,
-    "name_of_reservation": calendar.name_of_reservation
-  } for calendar, name, number_of_people in calendars]
+    "start_date": reservation.start_date,
+    "end_date": reservation.end_date,
+    "name_of_reservation": reservation.name_of_reservation
+  } for reservation, name, _ in reservations]
 
-def check_for_overlapping_dates(db: Session, apartment_id:int, start_date: datetime, end_date:datetime):
+def check_for_overlapping_dates(db: Session, apartment_id: int, start_date: datetime, end_date: datetime):
   return db.query(ApartmentCalendar).filter(
     ApartmentCalendar.apartment_id == apartment_id,
     ApartmentCalendar.start_date < end_date,

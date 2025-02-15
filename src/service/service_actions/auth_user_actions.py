@@ -9,6 +9,7 @@ from utils.create_access_token import create_access_token
 def register_new_user(db: Session, user):
   hashed_password = hash_password(user.password)
   create_user(db, user, hashed_password)
+  login_existing_user(db, user)
 
 def login_existing_user(db: Session, user):
   db_user = get_user_by_username(db, user.username)

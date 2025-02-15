@@ -8,29 +8,29 @@ from utils.is_valid_url import is_valid_url
 from utils.confirm_datetime import confirm_datetime
 from utils.get_ics_from_url import get_ics_from_url
 
-async def import_calendar_from_ics_file(file: UploadFile, db: Session):
+async def import_calendar_from_ics_file(file: UploadFile, db: Session, user_id: int):
   try:
     content = await file.read()
     calendar = Calendar(content.decode("utf-8"))
 
-    return import_calendar(calendar.events, db)
+    return import_calendar(calendar.events, db, user_id)
   except Exception as e:
     raise HTTPException(status_code=400, detail=f"Error processing ICS file: {str(e)}")
 
-async def import_calendar_from_url(url:str, db:Session):
+async def import_calendar_from_url(url:str, db:Session, user_id: int):
   try:
     if not is_valid_url(url):
       raise HTTPException(status_code=400, detail="Invalid URL format")
     
     calendar = get_ics_from_url(url)
 
-    return import_calendar(calendar.events, db)
+    return import_calendar(calendar.events, db, user_id)
   except Exception as e:
     raise HTTPException(status_code=400, detail=f"Error processing ICS URL: {str(e)}")
 
 
-def import_calendar(events, db:Session):
-  apartment = create_apartment(db, number_of_people=3)
+def import_calendar(events, db:Session, user_id: int):
+  apartment = create_apartment(db, user_id)
 
   for event in events:
     name_of_reservation = event.name
