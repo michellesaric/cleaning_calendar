@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
-from model.User import User
 from fastapi import HTTPException
 from pydantic import BaseModel
+from model.User import User
 
 class UserPyModel(BaseModel):
     username: str

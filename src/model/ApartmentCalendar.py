@@ -1,5 +1,5 @@
-from .base import Base
 from sqlalchemy import Column, Integer, ForeignKey, DateTime, CheckConstraint, String
+from .base import Base
 
 class ApartmentCalendar(Base):
   __tablename__: str = 'apartment_calendar'

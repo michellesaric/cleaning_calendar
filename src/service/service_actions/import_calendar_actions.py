@@ -2,8 +2,8 @@ from fastapi import HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from ics import Calendar
 
-from service.db_actions.apartment_calendar_db_actions import create_apartment_calendar
 from service.db_actions.apartment_db_actions import create_apartment
+from service.db_actions.apartment_calendar_db_actions import create_apartment_calendar
 from utils.is_valid_url import is_valid_url
 from utils.confirm_datetime import confirm_datetime
 from utils.get_ics_from_url import get_ics_from_url

@@ -7,9 +7,14 @@ from utils.verify_password import verify_password
 from utils.create_access_token import create_access_token
 
 def register_new_user(db: Session, user):
+  if user.username == "":
+    raise HTTPException(status_code=400, detail="Username can not be empty")
+  if user.password == "":
+    raise HTTPException(status_code=400, detail="Password can not be empty")
+  
   hashed_password = hash_password(user.password)
   create_user(db, user, hashed_password)
-  login_existing_user(db, user)
+  return login_existing_user(db, user)
 
 def login_existing_user(db: Session, user):
   db_user = get_user_by_username(db, user.username)
@@ -17,5 +22,4 @@ def login_existing_user(db: Session, user):
     raise HTTPException(status_code=401, detail="Invalid credentials")
 
   access_token = create_access_token(data={"sub": db_user.username, "id": db_user.id})
-
   return {"access_token": access_token, "token_type": "bearer"}

@@ -1,11 +1,15 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
-db_user: str = "postgres"
-db_port: int = 5432
-db_host: str = "localhost"
-db_password: str = "nesnikadpogodit"
-db_name: str = "cleaning-schedule"
+load_dotenv()
+
+db_user: str = os.getenv("DB_USER")
+db_port: int = os.getenv("DB_PORT")
+db_host: str = os.getenv("DB_HOST")
+db_password: str = os.getenv("DB_PASSWORD")
+db_name: str = os.getenv("DB_NAME")
 
 uri: str = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 

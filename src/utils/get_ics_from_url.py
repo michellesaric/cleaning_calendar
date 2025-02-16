@@ -1,5 +1,5 @@
-from fastapi import HTTPException
 import requests
+from fastapi import HTTPException
 from ics import Calendar
 
 def get_ics_from_url(url: str) -> Calendar:

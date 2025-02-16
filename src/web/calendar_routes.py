@@ -3,8 +3,7 @@ from sqlalchemy.orm import Session
 
 from data.database import get_db
 from service.db_actions.user_db_actions import UserPyModel
-from service.db_actions.apartment_calendar_db_actions import get_all_calendars, get_calendar_by_id
-from service.service_actions.get_current_user import get_current_user
+from service.service_actions.get_current_user_actions import get_current_user
 from service.service_actions.import_calendar_actions import import_calendar_from_ics_file, import_calendar_from_url
 from service.service_actions.export_calendar_actions import export_all_calendars_and_cleaning_schedule, export_reservations_and_cleaning_dates_by_id
 

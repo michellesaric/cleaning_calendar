@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from model.Apartment import Apartment
 from pydantic import BaseModel
+from model.Apartment import Apartment
 
 class ApartmentPyModel(BaseModel):
   name: str
