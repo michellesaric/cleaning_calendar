@@ -2,7 +2,7 @@ from fastapi import HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from ics import Calendar
 
-from service.db_actions.apartment_calendar_db_actions import check_for_overlapping_dates, create_apartment_calendar
+from service.db_actions.apartment_calendar_db_actions import create_apartment_calendar
 from service.db_actions.apartment_db_actions import create_apartment
 from utils.is_valid_url import is_valid_url
 from utils.confirm_datetime import confirm_datetime
@@ -13,7 +13,8 @@ async def import_calendar_from_ics_file(file: UploadFile, db: Session, user_id: 
     content = await file.read()
     calendar = Calendar(content.decode("utf-8"))
 
-    return import_calendar(calendar.events, db, user_id)
+    message = import_calendar(calendar.events, db, user_id)
+    return message
   except Exception as e:
     raise HTTPException(status_code=400, detail=f"Error processing ICS file: {str(e)}")
 
@@ -40,9 +41,9 @@ def import_calendar(events, db:Session, user_id: int):
     start_date = confirm_datetime(start_date)
     end_date = confirm_datetime(end_date)
 
-    overlap = check_for_overlapping_dates(db, apartment.id, start_date, end_date)
-    if overlap:
-      raise HTTPException(status_code=400, detail=f"Booking conflict for apartment '{apartment.name}")
+    # overlap = check_for_overlapping_dates(db, apartment.id, start_date, end_date)
+    # if overlap:
+    #   raise HTTPException(status_code=400, detail=f"Booking conflict for apartment '{apartment.name}")
 
     create_apartment_calendar(db, apartment.id, start_date, end_date, name_of_reservation)
 

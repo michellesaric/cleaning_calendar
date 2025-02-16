@@ -3,7 +3,6 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from model.Apartment import Apartment
 from model.ApartmentCalendar import ApartmentCalendar
-from service.db_actions.apartment_db_actions import get_apartment_by_id
 
 def create_apartment_calendar(db: Session, apartment_id: int, start_date: datetime, end_date: datetime, name_of_reservation: str):
   apartment = db.query(Apartment).filter(Apartment.id == apartment_id).first()
@@ -49,9 +48,8 @@ def get_calendar_by_id(db: Session, calendar_id: int, user_id: int):
   if not reservations:
     raise HTTPException(status_code=404, detail="Calendar not found")
   
-  apartment_calendar, _, _ = reservations[0]
-  apartment_id = apartment_calendar.apartment_id 
-  if apartment_id != user_id:
+  _, _, user_id = reservations[0]
+  if user_id != user_id:
     raise HTTPException(status_code=403, detail="Unauthorized to use this calendar")
 
   return [{
@@ -62,9 +60,9 @@ def get_calendar_by_id(db: Session, calendar_id: int, user_id: int):
     "name_of_reservation": reservation.name_of_reservation
   } for reservation, name, _ in reservations]
 
-def check_for_overlapping_dates(db: Session, apartment_id: int, start_date: datetime, end_date: datetime):
-  return db.query(ApartmentCalendar).filter(
-    ApartmentCalendar.apartment_id == apartment_id,
-    ApartmentCalendar.start_date < end_date,
-    ApartmentCalendar.end_date > start_date
-  ).first()
+# def check_for_overlapping_dates(db: Session, apartment_id: int, start_date: datetime, end_date: datetime):
+#   return db.query(ApartmentCalendar).filter(
+#     ApartmentCalendar.apartment_id == apartment_id,
+#     ApartmentCalendar.start_date < end_date,
+#     ApartmentCalendar.end_date >= start_date
+#   ).first()
