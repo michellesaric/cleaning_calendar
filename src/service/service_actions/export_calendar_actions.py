@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from collections import defaultdict
 from service.db_actions.apartment_calendar_db_actions import get_all_calendars
 from service.db_actions.apartment_db_actions import get_apartment_by_id
+from utils.filter_dates import filter_dates
 
 def export_all_calendars_and_cleaning_schedule(db: Session, user_id: int):
   reservations = get_all_calendars(db, user_id)
@@ -33,8 +34,7 @@ def export_all_calendars_and_cleaning_schedule(db: Session, user_id: int):
       cleaning_dates.append(end_date)
   cleaning_dates.append(all_sorted_end_dates[-1])
 
-  for apartment_name in apartments:
-    apartments[apartment_name]["cleaning_dates"] = cleaning_dates
+  apartments = filter_dates(apartments, cleaning_dates)
 
   return [{"apartment_name": name, **data} for name, data in apartments.items()]
 
